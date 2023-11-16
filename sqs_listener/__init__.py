@@ -204,6 +204,7 @@ class SqsListener(object):
                                     ReceiptHandle=receipt_handle,
                                     VisibilityTimeout=new_visibility_timeout,
                                 )
+                                continue
 
                             self._client.delete_message(
                                 QueueUrl=self._queue_url, ReceiptHandle=receipt_handle
