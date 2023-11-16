@@ -202,7 +202,7 @@ class SqsListener(object):
                                 self._client.change_message_visibility(
                                     QueueUrl=self._queue_url,
                                     ReceiptHandle=receipt_handle,
-                                    VisibilityTimeout=new_visibility_timeout,
+                                    VisibilityTimeout=int(new_visibility_timeout),
                                 )
                                 continue
 
