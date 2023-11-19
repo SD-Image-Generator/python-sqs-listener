@@ -167,7 +167,7 @@ class SqsListener(object):
                 WaitTimeSeconds=self._wait_time,
                 MaxNumberOfMessages=self._max_number_of_messages,
             )
-            if "Messages" in messages:
+            if messages.get("Messages"):
                 sqs_logger.debug(messages)
                 sqs_logger.info(
                     "{} messages received".format(len(messages["Messages"]))
@@ -199,6 +199,9 @@ class SqsListener(object):
                                 deserialized, message_attribs, attribs
                             )
                             if self._process_later and new_visibility_timeout:
+                                sqs_logger.info(
+                                    f"Processing message later after {str(int(new_visibility_timeout))} seconds"
+                                )
                                 self._client.change_message_visibility(
                                     QueueUrl=self._queue_url,
                                     ReceiptHandle=receipt_handle,
