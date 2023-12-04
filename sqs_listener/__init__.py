@@ -198,15 +198,22 @@ class SqsListener(object):
                             new_visibility_timeout = self.handle_message(
                                 deserialized, message_attribs, attribs
                             )
-                            if self._process_later and new_visibility_timeout:
-                                sqs_logger.info(
-                                    f"Processing message later after {str(int(new_visibility_timeout))} seconds"
-                                )
-                                self._client.change_message_visibility(
-                                    QueueUrl=self._queue_url,
-                                    ReceiptHandle=receipt_handle,
-                                    VisibilityTimeout=int(new_visibility_timeout),
-                                )
+                            if self._process_later and (
+                                new_visibility_timeout is not None
+                            ):
+                                if int(new_visibility_timeout) > 0:
+                                    sqs_logger.info(
+                                        f"Processing message later after {str(int(new_visibility_timeout))} seconds"
+                                    )
+                                    self._client.change_message_visibility(
+                                        QueueUrl=self._queue_url,
+                                        ReceiptHandle=receipt_handle,
+                                        VisibilityTimeout=int(new_visibility_timeout),
+                                    )
+                                else:
+                                    sqs_logger.error(
+                                        f"new visibility timeout {new_visibility_timeout} should be greater than 0"
+                                    )
                                 continue
 
                             self._client.delete_message(
